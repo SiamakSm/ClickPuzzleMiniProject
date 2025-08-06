@@ -4,7 +4,7 @@ const bestScoreDisplay = document.getElementById("bestScoreDisplay");
 const modeButtons = document.querySelectorAll('input[name="mode"]');
 const allButtons = document.getElementById("allButtons");
 
-let count;
+let count = modeButton();
 let startWaitTime;
 let numbers;
 let expectedNumber = 1;
@@ -13,7 +13,13 @@ let bestScore;
 let interval;
 let isPlaying = false;
 
-modeButton();
+modeButtons.forEach(button => {
+    button.addEventListener("change", function () {
+        count = modeButton();
+        lastBestScore();
+    });
+});
+
 function modeButton() {
     for (let button of modeButtons) {
         if (button.checked) {
@@ -25,7 +31,7 @@ function modeButton() {
 
 lastBestScore();
 function lastBestScore() {
-    bestScore = JSON.parse(localStorage.getItem("orderButtons"));
+    bestScore = JSON.parse(localStorage.getItem(getStorageKey()));
     if (bestScore) {
         bestScoreDisplay.textContent = `Your last best score is : ${bestScore.toFixed(2)} secondes`;
     } else {
@@ -88,9 +94,9 @@ function addEventFunction(button) {
             let score = (Date.now() - startTime) / 1000;
             scoreDisplay.textContent = `Time : ${score.toFixed(2)} secondes`;
 
-            bestScore = JSON.parse(localStorage.getItem("orderButtons"));
+            bestScore = JSON.parse(localStorage.getItem(getStorageKey()));
             if (!bestScore || score < bestScore) {
-                localStorage.setItem("orderButtons", score);
+                localStorage.setItem(getStorageKey(), score);
                 bestScore = score;
                 bestScoreDisplay.textContent = `Your new best score is : ${bestScore.toFixed(2)} secondes`;
             } else {
@@ -104,3 +110,6 @@ function addEventFunction(button) {
     });
 };
 
+function getStorageKey() {
+    return count === 5 ? "orderButtons_easy" : "orderButtons_hard";
+}
