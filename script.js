@@ -80,7 +80,7 @@ function addEventFunction(button) {
             if ((Number(target.textContent)) == expectedNumber) {
                 console.log(target.textContent);
                 target.disabled = true;
-                target.style.color = "green";
+                target.classList.add("clicked");
                 expectedNumber++;
             };
         };

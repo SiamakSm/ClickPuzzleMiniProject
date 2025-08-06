@@ -51,9 +51,9 @@ input[type="radio"]:checked+label {
 }
 
 #allButtons button {
-    font-size: 22px;
+    font-size: 20px;
     border-radius: 12px;
-    background-color: #fc3e3e;
+    background-color: #fa2626;
     color: rgb(0, 0, 0);
     border: none;
     transition: all 0.2s ease;
@@ -63,8 +63,8 @@ input[type="radio"]:checked+label {
     align-items: center;
     user-select: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-    padding: 12px 18px;
-    min-width: 60px;
+    padding: 8px 14px;
+        min-width: 50px;
 }
 
 #allButtons button:hover {
@@ -77,12 +77,18 @@ input[type="radio"]:checked+label {
     background-color: #e89a57;
 }
 
+button.clicked {
+    background-color: #ddd !important;
+    color: #555 !important;
+    opacity: 0.6;
+    cursor: default;
+}
 #startBtn {
     background-color: #e5ef57d7;
     border-radius: 10px;
     margin-top: 15px;
-    font-size: 18px;
-    padding: 10px 20px;
+    font-size: 16px;
+        padding: 8px 18px;
     margin-bottom: 5%;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     cursor: pointer;
@@ -90,7 +96,7 @@ input[type="radio"]:checked+label {
 }
 
 #startBtn:hover {
-    background-color: #35a6bc97;
+    background-color: #cce51597;
     transform: scale(1.05);
 }
 
