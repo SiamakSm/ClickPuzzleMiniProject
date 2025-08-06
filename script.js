@@ -1,16 +1,31 @@
-const buttons = document.querySelectorAll("#buttonsContainer button");
 const startBtn = document.getElementById("startBtn");
 const scoreDisplay = document.getElementById("scoreDisplay");
 const bestScoreDisplay = document.getElementById("bestScoreDisplay");
+const modeButtons = document.querySelectorAll('input[name="mode"]');
+const allButtons = document.getElementById("allButtons");
 
-let numbers = [1, 2, 3, 4, 5];
+let count;
+let startWaitTime;
+let numbers;
 let expectedNumber = 1;
 let startTime = null;
 let bestScore;
+let interval;
+let isPlaying = false;
+
+modeButton();
+function modeButton() {
+    for (let button of modeButtons) {
+        if (button.checked) {
+            return Number(button.value);
+        };
+    };
+    return null;
+}
 
 lastBestScore();
 function lastBestScore() {
-    bestScore = JSON.parse(localStorage.getItem("Best Score 5 Buttons"));
+    bestScore = JSON.parse(localStorage.getItem("orderButtons"));
     if (bestScore) {
         bestScoreDisplay.textContent = `Your last best score is : ${bestScore.toFixed(2)} secondes`;
     } else {
@@ -18,15 +33,50 @@ function lastBestScore() {
     };
 };
 
-buttons.forEach((button) => {
-    button.disabled = true;
-    button.style.color = "red";
-    button.textContent = "?";
+
+startBtn.addEventListener("click", function () {
+    if (isPlaying) return;
+
+    isPlaying = true;
+    clearInterval(interval);
+    startWaitTime = 3;
+    startBtn.textContent = startWaitTime;
+    allButtons.textContent = "";
+
+    interval = setInterval(() => {
+        startWaitTime--;
+        startBtn.textContent = startWaitTime;
+
+        if (startWaitTime == 0) {
+            clearInterval(interval);
+            count = modeButton();
+            numbers = Array.from({ length: count }, (_, i) => i + 1);
+            let shuffled = [...numbers].sort(() => Math.random() - 0.5);
+            startBtn.textContent = "Go...";
+
+            for (let i = 0; i < count; i++) {
+                let button = document.createElement("button");
+                button.disabled = false;
+                button.style.color = "black";
+                button.textContent = shuffled[i];
+                addEventFunction(button);
+                allButtons.appendChild(button);
+            }
+            startTime = Date.now();
+            startBtn.textContent = "RESTART";
+            isPlaying = false;
+        };
+    }, 1000);
+
+    scoreDisplay.textContent = "Score";
+    expectedNumber = 1;
+
 });
 
-buttons.forEach(button => {
+
+function addEventFunction(button) {
     button.addEventListener("click", ({ target }) => {
-        if (expectedNumber <= 5) {
+        if (expectedNumber <= count) {
             if ((Number(target.textContent)) == expectedNumber) {
                 console.log(target.textContent);
                 target.disabled = true;
@@ -34,57 +84,23 @@ buttons.forEach(button => {
                 expectedNumber++;
             };
         };
-        if (expectedNumber > 5) {
-
+        if (expectedNumber > count) {
             let score = (Date.now() - startTime) / 1000;
             scoreDisplay.textContent = `Time : ${score.toFixed(2)} secondes`;
 
-            bestScore = JSON.parse(localStorage.getItem("Best Score 5 Buttons"));
+            bestScore = JSON.parse(localStorage.getItem("orderButtons"));
             if (!bestScore || score < bestScore) {
-                localStorage.setItem("Best Score 5 Buttons", score);
+                localStorage.setItem("orderButtons", score);
                 bestScore = score;
                 bestScoreDisplay.textContent = `Your new best score is : ${bestScore.toFixed(2)} secondes`;
             } else {
                 lastBestScore();
             };
             scoreDisplay.textContent = `Time : ${score.toFixed(2)} secondes`;
-            startBtn.textContent = "Restart";
+            startBtn.textContent = "Try Again?";
+            isPlaying = false;
             return;
         };
     });
-});
-
-
-
-startBtn.addEventListener("click", function () {
-    let count = 3;
-    startBtn.textContent = count;
-
-    buttons.forEach((button) => {
-        button.disabled = true;
-        button.textContent = "?";
-        button.style.color = "red";
-    });
-
-    scoreDisplay.textContent = "Score";
-    expectedNumber = 1;
-    let shuffled = [...numbers].sort(() => Math.random() - 0.5);
-
-    let countdownInterval = setInterval(() => {
-        count--;
-        if (count > 0) {
-            startBtn.textContent = count;
-        } else {
-            clearInterval(countdownInterval);
-            startBtn.textContent = "Go...";
-            buttons.forEach((button, i) => {
-                button.disabled = false;
-                button.style.color = "black";
-                button.textContent = shuffled[i];
-                startTime = Date.now()
-            });
-        };
-    }, 1000);
-});
-
+};
 
